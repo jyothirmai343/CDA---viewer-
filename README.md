@@ -1,70 +1,106 @@
-# Getting Started with Create React App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# 3D Model Upload and Export API
 
-## Available Scripts
+This is a Flask-based backend for uploading, retrieving, and converting 3D models in STL and OBJ formats. The API allows users to upload 3D files, retrieve them, and export them to a different format.
 
-In the project directory, you can run:
+## Features
+- Upload 3D models in STL or OBJ format.
+- Retrieve uploaded 3D models.
+- Convert models between STL and OBJ formats.
+- Secure file handling with unique filenames.
+- Cross-Origin Resource Sharing (CORS) enabled for frontend integration.
 
-### `npm start`
+## Technologies Used
+- Flask (Python web framework)
+- Flask-CORS (Handling cross-origin requests)
+- Trimesh (3D model processing)
+- NumPy (Used internally by Trimesh)
+- WerkZeug (Secure file handling)
+- UUID (Generating unique filenames)
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Installation
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### Prerequisites
+Ensure you have Python installed on your system.
 
-### `npm test`
+### Steps
+1. Clone the repository:
+   ```sh
+   git clone <repository-url>
+   cd <repository-folder>
+   ```
+2. Create a virtual environment (optional but recommended):
+   ```sh
+   python -m venv venv
+   source venv/bin/activate  # On Windows use: venv\Scripts\activate
+   ```
+3. Install dependencies:
+   ```sh
+   pip install -r requirements.txt
+   ```
+4. Run the Flask server:
+   ```sh
+   python app.py
+   ```
+5. The API will be available at:
+   ```
+   http://127.0.0.1:5000/
+   ```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## API Endpoints
 
-### `npm run build`
+### 1. Upload a 3D Model
+**Endpoint:** `/api/upload`  
+**Method:** `POST`  
+**Description:** Upload a STL or OBJ file.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+#### Request:
+- **Form Data:** `file` (STL or OBJ file)
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+#### Response:
+```json
+{
+  "message": "File uploaded successfully",
+  "filename": "unique-filename.stl"
+}
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+---
 
-### `npm run eject`
+### 2. Retrieve a 3D Model
+**Endpoint:** `/api/models/<filename>`  
+**Method:** `GET`  
+**Description:** Retrieve an uploaded 3D model by filename.
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+#### Response:
+- Returns the requested file.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+---
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+### 3. Export a 3D Model
+**Endpoint:** `/api/export`  
+**Method:** `POST`  
+**Description:** Convert a 3D model between STL and OBJ formats.
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+#### Request:
+- **Form Data:**
+  - `file` (Uploaded 3D model)
+  - `fromFormat` (Current format: `stl` or `obj`)
+  - `toFormat` (Desired format: `stl` or `obj`)
 
-## Learn More
+#### Response:
+- Returns the converted file for download.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+---
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## Notes
+- The maximum file size allowed is **16MB**.
+- Temporary files are stored in the system's temp directory and deleted after processing.
 
-### Code Splitting
+## Future Improvements
+- Support for additional 3D file formats (e.g., GLTF, FBX, PLY).
+- Cloud storage support (AWS S3, Google Cloud Storage).
+- File validation and preview support.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
 
-### Analyzing the Bundle Size
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
