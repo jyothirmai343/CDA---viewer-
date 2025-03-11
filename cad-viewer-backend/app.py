@@ -1,4 +1,4 @@
-# app.py
+
 from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
 import os
@@ -9,14 +9,14 @@ import trimesh
 import uuid
 
 app = Flask(__name__)
-CORS(app)  # Enable CORS for all routes
+CORS(app) 
 
-# Create temp directory if it doesn't exist
+
 UPLOAD_FOLDER = os.path.join(tempfile.gettempdir(), 'cad_viewer_uploads')
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max upload size
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024 
 
 ALLOWED_EXTENSIONS = {'stl', 'obj'}
 
@@ -37,16 +37,16 @@ def upload_file():
         return jsonify({'error': 'File type not allowed'}), 400
     
     try:
-        # Generate a unique filename
+        
         original_filename = secure_filename(file.filename)
         file_extension = original_filename.rsplit('.', 1)[1].lower()
         unique_filename = f"{uuid.uuid4().hex}.{file_extension}"
         filepath = os.path.join(app.config['UPLOAD_FOLDER'], unique_filename)
         
-        # Save the file
+     
         file.save(filepath)
         
-        # Return the filename for later reference
+
         return jsonify({
             'message': 'File uploaded successfully',
             'filename': unique_filename
@@ -80,25 +80,24 @@ def export_model():
         return jsonify({'error': 'Unsupported file format'}), 400
     
     try:
-        # Save the uploaded file temporarily
         original_filename = secure_filename(file.filename)
         temp_input_path = os.path.join(app.config['UPLOAD_FOLDER'], f"temp_input_{uuid.uuid4().hex}.{from_format}")
         file.save(temp_input_path)
         
-        # Generate output path
+        
         output_filename = f"export_{uuid.uuid4().hex}.{to_format}"
         temp_output_path = os.path.join(app.config['UPLOAD_FOLDER'], output_filename)
         
-        # Load the model with trimesh
+        
         mesh = trimesh.load(temp_input_path)
         
-        # Export to the desired format
+      
         if to_format == 'stl':
             mesh.export(temp_output_path, file_type='stl')
         elif to_format == 'obj':
             mesh.export(temp_output_path, file_type='obj')
         
-        # Send the converted file
+        
         return send_file(
             temp_output_path,
             as_attachment=True,
@@ -110,7 +109,7 @@ def export_model():
         return jsonify({'error': str(e)}), 500
     
     finally:
-        # Clean up temporary files
+       
         try:
             if os.path.exists(temp_input_path):
                 os.remove(temp_input_path)
